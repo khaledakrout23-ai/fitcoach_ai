@@ -1,0 +1,23 @@
+// Types d'équipement : [code, nom FR, nom AR, catégorie]
+module.exports = [
+  ['poids_du_corps', 'Poids du corps', 'وزن الجسم', 'POIDS_DU_CORPS'],
+  ['halteres', 'Haltères', 'دمبل', 'LIBRE'],
+  ['barre', 'Barre olympique', 'بار أولمبي', 'LIBRE'],
+  ['kettlebell', 'Kettlebell', 'كيتلبل', 'LIBRE'],
+  ['elastique', 'Élastiques', 'أحزمة مطاطية', 'LIBRE'],
+  ['banc', 'Banc réglable', 'مقعد قابل للتعديل', 'LIBRE'],
+  ['banc_couche', 'Banc de développé couché', 'مقعد ضغط الصدر', 'MACHINE'],
+  ['cage_squat', 'Cage à squat', 'قفص السكوات', 'MACHINE'],
+  ['smith', 'Smith machine', 'جهاز سميث', 'MACHINE'],
+  ['presse_cuisses', 'Presse à cuisses', 'جهاز ضغط الأرجل', 'MACHINE'],
+  ['leg_extension', 'Leg extension', 'جهاز مد الأرجل', 'MACHINE'],
+  ['leg_curl', 'Leg curl', 'جهاز ثني الأرجل', 'MACHINE'],
+  ['poulie', 'Poulie (vis-à-vis)', 'جهاز الكابل', 'MACHINE'],
+  ['tirage_vertical', 'Machine tirage vertical', 'جهاز السحب العلوي', 'MACHINE'],
+  ['tirage_horizontal', 'Machine rowing assis', 'جهاز التجديف', 'MACHINE'],
+  ['machine_pec', 'Machine pectoraux (butterfly)', 'جهاز فراشة الصدر', 'MACHINE'],
+  ['machine_epaules', 'Machine développé épaules', 'جهاز ضغط الكتف', 'MACHINE'],
+  ['barre_traction', 'Barre de traction', 'عقلة', 'MACHINE'],
+  ['barres_paralleles', 'Barres parallèles (dips)', 'متوازي', 'MACHINE'],
+  ['mollets', 'Machine mollets', 'جهاز السمانة', 'MACHINE'],
+];

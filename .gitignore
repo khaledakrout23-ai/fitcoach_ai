@@ -1,0 +1,17 @@
+# Dépendances et fichiers générés
+node_modules/
+dist/
+.expo/
+web-build/
+
+# Secrets : seul backend/.env.example (sans valeurs) est publié
+.env
+.env.*
+!.env.example
+
+# Journaux et fichiers système
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/
