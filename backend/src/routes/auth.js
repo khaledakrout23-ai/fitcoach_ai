@@ -1,90 +1,141 @@
+// Connexion, première connexion (mot de passe provisoire), déconnexion, mot de passe oublié de l'équipe
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const { User, Gym } = require('../models');
 const { ah, HttpError } = require('../middleware/errors');
-const { auth, signToken } = require('../middleware/auth');
-const { publicUser, required, checkPassword } = require('../utils');
+const { auth, startSession } = require('../middleware/auth');
+const { rateLimit, clearSessionCookie } = require('../middleware/security');
+const { publicUser, required, checkPassword, normalizePhone, normEmail } = require('../utils');
 const { sendCode, checkCode } = require('../services/emailCodes');
+const { permissionsOf } = require('../services/permissions');
+const { publicGymSettings } = require('../services/gymSettings');
 
-const normEmail = (email) => String(email || '').toLowerCase().trim();
-const findByEmail = (email) => User.scope('withPassword').findOne({ where: { email: normEmail(email) } });
+const BCRYPT_COST = 11;
+const MAX_FAILED = 5;
+const LOCK_MINUTES = 15;
+// hash factice : même durée de calcul que le compte existe ou non (pas d'énumération par le temps de réponse)
+const DUMMY_HASH = bcrypt.hashSync('kammel-dummy-password', BCRYPT_COST);
 
-// Inscription : seuls les sportifs créent leur compte eux-mêmes (RG7).
-// Le compte n'est utilisable qu'après la saisie du code reçu par e-mail.
-router.post(
-  '/register',
-  ah(async (req, res) => {
-    required(req.body, ['name', 'email', 'password']);
-    const { name, email, password, language } = req.body;
-    checkPassword(password);
-    const exists = await User.findOne({ where: { email: normEmail(email) } });
-    if (exists) throw new HttpError(409, 'EMAIL_TAKEN', 'Cet e-mail est déjà utilisé.');
-    const user = await User.create({
-      name: String(name).trim(),
-      email: normEmail(email),
-      passwordHash: await bcrypt.hash(String(password), 10),
-      role: 'SPORTIF',
-      language: language === 'ar' ? 'ar' : 'fr',
-      injuries: [],
-      emailVerified: false,
-    });
-    await sendCode(user, 'VERIFY', { force: true });
-    res.status(201).json({ needsVerification: true, email: user.email });
-  })
-);
+const BAD_CREDENTIALS = () => new HttpError(401, 'BAD_CREDENTIALS', 'Identifiant ou mot de passe incorrect.');
+
+// 10 essais par minute et par adresse IP, 30 par identifiant et par heure
+const loginLimiter = rateLimit({ windowMs: 60 * 1000, max: 10 });
+const identifierLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 30,
+  key: (req) => `id:${String(req.body?.identifier || '').toLowerCase().replace(/\s+/g, '')}`,
+});
+const codeLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 8 });
+
+// Téléphone (membres) ou e-mail (équipe, administrateur)
+function findByIdentifier(identifier) {
+  const raw = String(identifier || '').trim();
+  if (raw.includes('@')) return User.scope('withPassword').findOne({ where: { email: normEmail(raw) } });
+  const phone = normalizePhone(raw);
+  return phone ? User.scope('withPassword').findOne({ where: { phone } }) : Promise.resolve(null);
+}
+
+// Utilisateur connecté + salle + permissions (réponse de /me, /login, /first-password)
+async function sessionPayload(userId) {
+  const user = await User.findByPk(userId, { include: [{ model: Gym, as: 'gym' }] });
+  const data = publicUser(user);
+  if (data.gym) data.gym = { ...data.gym, settings: publicGymSettings(user.gym, user.role) };
+  data.permissions = permissionsOf(user.role);
+  return data;
+}
 
 router.post(
   '/login',
+  loginLimiter,
+  identifierLimiter,
   ah(async (req, res) => {
-    required(req.body, ['email', 'password']);
-    const user = await findByEmail(req.body.email);
-    const ok = user && (await bcrypt.compare(String(req.body.password), user.passwordHash));
-    if (!ok) throw new HttpError(401, 'BAD_CREDENTIALS', 'E-mail ou mot de passe incorrect.');
-    if (!user.active) throw new HttpError(403, 'ACCOUNT_DISABLED', 'Compte désactivé. Contactez votre salle.');
-    if (!user.emailVerified) {
-      // nouveau code envoyé automatiquement (sauf si un code vient déjà de partir)
-      await sendCode(user, 'VERIFY').catch((err) => {
-        if (err.code !== 'TOO_SOON') throw err;
-      });
-      throw new HttpError(403, 'EMAIL_NOT_VERIFIED', 'Adresse e-mail non vérifiée : saisissez le code reçu par e-mail.');
+    required(req.body, ['identifier', 'password']);
+    const user = await findByIdentifier(req.body.identifier);
+    const password = String(req.body.password).slice(0, 200);
+    if (!user || user.deletedAt) {
+      await bcrypt.compare(password, DUMMY_HASH);
+      throw BAD_CREDENTIALS();
     }
-    res.json({ token: signToken(user), user: publicUser(user) });
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      await bcrypt.compare(password, DUMMY_HASH);
+      throw new HttpError(429, 'ACCOUNT_LOCKED', `Trop d'essais. Réessaie dans ${LOCK_MINUTES} minutes.`);
+    }
+    if (!(await bcrypt.compare(password, user.passwordHash))) {
+      const failed = user.failedLogins + 1;
+      await user.update({
+        failedLogins: failed >= MAX_FAILED ? 0 : failed,
+        lockedUntil: failed >= MAX_FAILED ? new Date(Date.now() + LOCK_MINUTES * 60000) : user.lockedUntil,
+      });
+      throw BAD_CREDENTIALS();
+    }
+    if (!user.active) throw new HttpError(403, 'ACCOUNT_DISABLED', 'Compte désactivé. Contacte ta salle.');
+    if (user.mustChangePassword && user.tempPasswordExpiresAt && user.tempPasswordExpiresAt < new Date()) {
+      throw new HttpError(403, 'TEMP_PASSWORD_EXPIRED', 'Mot de passe provisoire expiré : demande un nouveau code à l’accueil.');
+    }
+    await user.update({ failedLogins: 0, lockedUntil: null, lastLoginAt: new Date() });
+    startSession(res, user, { remember: req.body.remember !== false });
+    res.json(await sessionPayload(user.id));
   })
 );
 
-// Code reçu par e-mail → adresse vérifiée, le sportif est connecté
+// Première connexion : le mot de passe provisoire donné à l'accueil est remplacé
 router.post(
-  '/verify-email',
+  '/first-password',
+  auth,
   ah(async (req, res) => {
-    required(req.body, ['email', 'code']);
-    const user = await findByEmail(req.body.email);
-    // compte inconnu ou déjà vérifié : aucun jeton sans code valide
-    if (!user || user.emailVerified) throw new HttpError(400, 'CODE_INVALID', 'Code invalide ou expiré. Demandez un nouveau code.');
-    await checkCode(user, 'VERIFY', req.body.code);
-    await user.update({ emailVerified: true });
-    res.json({ token: signToken(user), user: publicUser(user) });
+    required(req.body, ['currentPassword', 'newPassword']);
+    const user = await User.scope('withPassword').findByPk(req.user.id);
+    if (!user.mustChangePassword) throw new HttpError(400, 'NOT_REQUIRED', 'Mot de passe déjà choisi.');
+    if (!(await bcrypt.compare(String(req.body.currentPassword), user.passwordHash))) {
+      throw new HttpError(400, 'BAD_PASSWORD', 'Mot de passe provisoire incorrect.');
+    }
+    checkPassword(req.body.newPassword, { temporary: String(req.body.currentPassword) });
+    await user.update({
+      passwordHash: await bcrypt.hash(String(req.body.newPassword), BCRYPT_COST),
+      mustChangePassword: false,
+      tempPasswordExpiresAt: null,
+      passwordChangedAt: new Date(),
+      tokenVersion: user.tokenVersion + 1, // les autres sessions ouvertes avec le code provisoire sont coupées
+    });
+    startSession(res, user);
+    res.json(await sessionPayload(user.id));
   })
 );
 
-// Renvoyer un code (vérification ou mot de passe oublié). Réponse identique que le compte existe ou non.
+// Déconnexion ; everywhere = couper aussi les autres appareils
 router.post(
-  '/resend-code',
-  ah(async (req, res) => {
-    required(req.body, ['email']);
-    const purpose = req.body.purpose === 'RESET' ? 'RESET' : 'VERIFY';
-    const user = await findByEmail(req.body.email);
-    if (user && user.active && (purpose === 'RESET' || !user.emailVerified)) await sendCode(user, purpose);
-    res.json({ ok: true });
+  '/logout',
+  ah(async (req, res, next) => {
+    if (req.body?.everywhere) {
+      return auth(req, res, async (err) => {
+        if (err) return next(err);
+        await req.user.increment('tokenVersion');
+        clearSessionCookie(res);
+        return res.json({ ok: true });
+      });
+    }
+    clearSessionCookie(res);
+    return res.json({ ok: true });
   })
 );
 
-// Mot de passe oublié : envoie un code (sans révéler si l'adresse existe)
+router.get(
+  '/me',
+  auth,
+  ah(async (req, res) => {
+    res.json(await sessionPayload(req.user.id));
+  })
+);
+
+// Mot de passe oublié (équipe et administrateur, par e-mail). Les membres passent par l'accueil.
+// Réponse identique que l'adresse existe ou non.
 router.post(
   '/forgot-password',
+  codeLimiter,
   ah(async (req, res) => {
     required(req.body, ['email']);
-    const user = await findByEmail(req.body.email);
-    if (user && user.active) {
+    const user = await User.findOne({ where: { email: normEmail(req.body.email) } });
+    if (user && user.active && !user.deletedAt && user.role !== 'SPORTIF') {
       await sendCode(user, 'RESET').catch((err) => {
         if (err.code !== 'TOO_SOON') throw err;
       });
@@ -93,28 +144,31 @@ router.post(
   })
 );
 
-// Nouveau mot de passe avec le code reçu → le compte est aussi considéré comme vérifié
 router.post(
   '/reset-password',
+  codeLimiter,
   ah(async (req, res) => {
     required(req.body, ['email', 'code', 'password']);
     checkPassword(req.body.password);
-    const user = await findByEmail(req.body.email);
-    if (!user || !user.active) throw new HttpError(400, 'CODE_INVALID', 'Code invalide ou expiré. Demandez un nouveau code.');
+    const user = await User.scope('withPassword').findOne({ where: { email: normEmail(req.body.email) } });
+    if (!user || !user.active || user.deletedAt || user.role === 'SPORTIF') {
+      throw new HttpError(400, 'CODE_INVALID', 'Code invalide ou expiré. Demande un nouveau code.');
+    }
     await checkCode(user, 'RESET', req.body.code);
-    await user.update({ passwordHash: await bcrypt.hash(String(req.body.password), 10), emailVerified: true });
-    res.json({ token: signToken(user), user: publicUser(user) });
-  })
-);
-
-router.get(
-  '/me',
-  auth,
-  ah(async (req, res) => {
-    const user = await User.findByPk(req.user.id, { include: [{ model: Gym, as: 'gym' }] });
-    if (!user) throw new HttpError(404, 'NOT_FOUND', 'Utilisateur introuvable.');
-    res.json(publicUser(user));
+    await user.update({
+      passwordHash: await bcrypt.hash(String(req.body.password), BCRYPT_COST),
+      mustChangePassword: false,
+      tempPasswordExpiresAt: null,
+      passwordChangedAt: new Date(),
+      failedLogins: 0,
+      lockedUntil: null,
+      tokenVersion: user.tokenVersion + 1,
+    });
+    startSession(res, user);
+    res.json(await sessionPayload(user.id));
   })
 );
 
 module.exports = router;
+module.exports.BCRYPT_COST = BCRYPT_COST;
+module.exports.sessionPayload = sessionPayload;

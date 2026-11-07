@@ -1,0 +1,253 @@
+/* ==========================================================================
+   Accueil, connexions, premier mot de passe, mot de passe oublié
+   ========================================================================== */
+
+.auth-head h1 {
+  font-size: 32px;
+}
+.auth-head .lead {
+  font-size: 17px;
+}
+
+/* Ligne d'information (i) sous le mot de passe */
+.auth-info {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+}
+.auth-info .icon {
+  margin-top: 2px;
+}
+.auth-info.highlight {
+  padding: var(--s3) var(--s4);
+  border-radius: 14px;
+  background: var(--ember-soft);
+  color: var(--text);
+}
+.auth-info.highlight .icon {
+  color: var(--ember-text);
+}
+.auth-forgot {
+  align-items: center;
+}
+
+/* Formulaire qui pousse sa barre d'action en bas (premier mot de passe) */
+.grow-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.grow-form .auth-sticky {
+  margin-top: auto;
+  align-items: stretch;
+}
+.auth-sticky .link-btn {
+  align-self: center;
+}
+
+/* ---------------------------------------------------------------- Bienvenue (B1.2) */
+.welcome {
+  gap: var(--s3);
+}
+.wl-carousel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  margin-inline: calc(var(--gutter) * -1);
+}
+.wl-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  outline-offset: -2px;
+}
+.wl-track::-webkit-scrollbar {
+  display: none;
+}
+.wl-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  padding-inline: var(--gutter);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+.wl-visual {
+  position: relative;
+  min-height: 300px;
+  border-radius: 28px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--s4);
+  margin-bottom: var(--s5);
+  background: radial-gradient(circle at 80% 18%, var(--ember-soft), transparent 55%), var(--surface);
+}
+[data-theme='light'] .wl-visual {
+  border: 1px solid var(--line);
+}
+.wl-decor {
+  position: absolute;
+  top: 28px;
+  inset-inline-end: 24px;
+  color: var(--ember-text);
+  opacity: 0.22;
+}
+.wl-inner {
+  position: relative;
+  border-radius: 18px;
+  padding: var(--s4);
+  background: var(--surface-2);
+  font-size: 15px;
+}
+.wl-inner .small {
+  font-size: 14px;
+}
+.wl-led {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.wl-rings {
+  justify-content: space-around;
+}
+.center-col {
+  align-items: center;
+}
+.wl-title {
+  font-size: 32px;
+  line-height: 1.25;
+}
+.welcome .lead {
+  color: var(--text-muted);
+  font-size: 17px;
+}
+.wl-dots {
+  display: flex;
+  gap: 2px;
+  padding-inline: calc(var(--gutter) - 12px);
+}
+.wl-dots button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+.wl-dots button span {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--surface-3);
+  transition: width var(--t-med) var(--ease), background var(--t-med);
+}
+.wl-dots button.on span {
+  width: 26px;
+  background: var(--ember);
+}
+.welcome .auth-foot {
+  gap: var(--s1);
+}
+.btn.text.wl-have {
+  --btn-fg: var(--text);
+}
+.wl-staff {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  color: var(--text-muted);
+}
+
+/* ---------------------------------------------------------------- Connexion de l'équipe (D1 / M1) */
+.staff-login .split-form {
+  justify-content: flex-start;
+  gap: var(--s8);
+}
+.staff-login .auth-top {
+  margin-bottom: auto;
+}
+.staff-form {
+  margin-bottom: auto;
+}
+.remember-hint {
+  padding-inline-start: 34px;
+}
+.staff-visual {
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.staff-tagline {
+  font-size: 48px;
+  line-height: 1.15;
+  font-weight: 500;
+  max-width: 12ch;
+}
+.staff-value {
+  font-size: 18px;
+  line-height: 1.55;
+  opacity: 0.75;
+  max-width: 34ch;
+}
+.staff-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s3);
+  max-width: 560px;
+}
+.staff-features li {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 56px;
+  padding: var(--s2) var(--s4);
+  border-radius: 16px;
+  background: color-mix(in srgb, currentColor 7%, transparent);
+  font-size: 15px;
+  font-weight: 500;
+}
+.staff-feature-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 12px;
+  background: var(--ember-soft);
+  color: var(--ember);
+}
+@media (min-width: 1000px) {
+  .staff-login .split-form {
+    max-width: 520px;
+    padding: 48px 56px;
+    margin: 0;
+    justify-self: center;
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------- Code à 6 chiffres */
+.code-input {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--s2);
+}
+.code-input .input {
+  padding: 0;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 500;
+  min-height: 60px;
+  caret-color: var(--ember);
+}

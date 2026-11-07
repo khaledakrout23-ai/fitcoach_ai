@@ -1,0 +1,311 @@
+/* Séance (toujours sombre : data-theme="dark" sur .session-screen) */
+.session-screen {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+}
+.session-page {
+  gap: var(--s3);
+}
+
+/* ---------------------------------------------------------------- Barre du haut */
+.session-top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--s2);
+}
+.session-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: var(--tap);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 16px;
+}
+.session-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 0 var(--s3);
+  border-radius: 14px;
+  background: var(--surface-2);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.session-name {
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------------- Tableau des séries */
+.sets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+.sets-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 1fr 1fr 52px;
+  align-items: center;
+  gap: var(--s1);
+  min-height: 60px;
+  padding: 0 var(--s2);
+  border-radius: 16px;
+  text-align: center;
+}
+.sets-row.head {
+  min-height: 28px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.sets-row.active {
+  background: var(--surface);
+}
+.sets-row.done {
+  background: var(--ok-soft);
+}
+.set-n {
+  font-weight: 600;
+  font-size: 17px;
+}
+.sets-row.done .set-n {
+  color: var(--ok);
+}
+.set-prev {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.set-input {
+  width: 100%;
+  max-width: 84px;
+  min-height: 48px;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+.sets-row.active .set-input {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.sets-row.active .set-input:focus,
+.set-input:focus {
+  border-color: var(--ember);
+  color: var(--text);
+}
+.sets-row.done .set-input {
+  color: var(--text);
+  font-weight: 600;
+}
+.set-check {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-inline: auto;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--on-ember);
+  position: relative;
+}
+.set-check::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--surface-3);
+}
+.set-check[aria-pressed='true']::before {
+  border: 0;
+  background: var(--ok);
+}
+.set-check .icon {
+  position: relative;
+}
+.add-set {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  padding-inline: var(--s2);
+}
+
+/* ---------------------------------------------------------------- Occupée / Absente / En panne */
+.reason-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s2);
+}
+.reason-row .btn {
+  padding-inline: var(--s2);
+  font-size: 15px;
+  min-height: 52px;
+}
+
+/* ---------------------------------------------------------------- Repos */
+.rest {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s5);
+  padding: var(--s6) var(--gutter) calc(var(--s6) + var(--safe-bottom));
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
+  animation: fade var(--t-med) var(--ease);
+}
+.rest-title {
+  margin: 0;
+  font-size: 15px;
+}
+.rest-time {
+  font-size: 64px;
+}
+.rest-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: var(--s2);
+  width: 100%;
+  max-width: calc(var(--app-max) - 2 * var(--gutter));
+}
+
+/* ---------------------------------------------------------------- Alternatives */
+.alt-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+.alt-card {
+  padding: var(--s3);
+  border-radius: 18px;
+  background: var(--surface-2);
+  border: 1.5px solid transparent;
+}
+.alt-card.best {
+  border-color: var(--ember);
+}
+.alt-main {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+.alt-main .grow {
+  min-width: 0;
+}
+.alt-status {
+  display: inline;
+}
+.alt-status .led {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-inline-end: 6px;
+  vertical-align: middle;
+  background: var(--ok);
+}
+.alt-status .led.warn {
+  background: var(--warn);
+}
+.alt-advice,
+.alt-why {
+  margin: var(--s2) 0 0;
+}
+.alt-why-btn {
+  min-height: 36px;
+  margin-top: var(--s1);
+}
+
+/* ---------------------------------------------------------------- Liste des exercices de la séance */
+.entry-pick {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: var(--s1) var(--s2);
+}
+.entry-pick.current {
+  background: var(--surface-2);
+}
+.entry-n {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--surface-3);
+  font-weight: 600;
+  font-size: 14px;
+}
+.entry-n.done {
+  background: var(--ok);
+  color: var(--on-ember);
+}
+
+/* ---------------------------------------------------------------- Bilan */
+.finish-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s2);
+  padding-top: var(--s6);
+}
+.finish-badge {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--ember-soft);
+  color: var(--ember);
+  margin-bottom: var(--s2);
+}
+.finish-stats {
+  gap: var(--s2);
+}
+.finish-stats .card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+.rate-stars {
+  display: flex;
+  justify-content: center;
+  gap: var(--s1);
+}
+.rate-stars button {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-faint);
+}
+.rate-stars button.on {
+  color: var(--carbs);
+}
+.alt-card .ex-thumb,
+.alt-card .btn.secondary {
+  background: var(--surface-3);
+}

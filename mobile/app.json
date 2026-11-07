@@ -7,11 +7,21 @@
     "userInterfaceStyle": "light",
     "backgroundColor": "#EEF2F1",
     "primaryColor": "#1F6F78",
-    "ios": { "supportsTablet": false },
-    "android": { "package": "tn.fitcoach.ai" },
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "tn.fitcoach.ai"
+    },
     "plugins": [
-      ["expo-image-picker", { "cameraPermission": "FitCoach AI utilise l’appareil photo pour reconnaître les machines et analyser vos repas." }],
-      "expo-notifications"
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "FitCoach AI utilise l’appareil photo pour reconnaître les machines et analyser vos repas."
+        }
+      ],
+      "expo-notifications",
+      "expo-status-bar"
     ]
   }
 }

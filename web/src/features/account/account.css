@@ -1,0 +1,86 @@
+/* Compte (B9), paiements, carte d'accès */
+.ac-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  margin-bottom: var(--s2);
+}
+.ac-avatar {
+  width: 64px;
+  height: 64px;
+  font-size: 22px;
+  color: var(--ember-text);
+  background: var(--surface-2);
+}
+.ac-id {
+  min-width: 0;
+}
+.ac-sub .h3 {
+  margin-top: var(--s1);
+}
+.ac-sub .progress.danger > i {
+  background: var(--danger);
+}
+.ac-note {
+  padding-inline: var(--s1);
+}
+.ac-logout {
+  margin-top: var(--s6);
+  width: 100%;
+  min-height: 56px;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  color: var(--danger);
+  font: inherit;
+  font-weight: 500;
+}
+.ac-logout:hover {
+  background: var(--surface-2);
+}
+.ac-links {
+  align-items: center;
+}
+.account .list-row .value {
+  max-width: 60%;
+}
+
+/* Paiements */
+.pay-amount {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Carte d'accès */
+.pass {
+  align-items: stretch;
+}
+.pass-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s4);
+  text-align: center;
+  padding: var(--s6) var(--s5);
+}
+.pass-qr {
+  position: relative;
+  width: min(100%, 280px);
+}
+.pass-qr .qr {
+  width: 100%;
+  border-radius: 20px;
+}
+.pass-timer {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+.pass-who {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  text-align: start;
+}

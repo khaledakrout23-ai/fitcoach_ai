@@ -20,4 +20,10 @@ module.exports = [
   ['barre_traction', 'Barre de traction', 'عقلة', 'MACHINE'],
   ['barres_paralleles', 'Barres parallèles (dips)', 'متوازي', 'MACHINE'],
   ['mollets', 'Machine mollets', 'جهاز السمانة', 'MACHINE'],
+  ['chest_press', 'Presse pectorale', 'جهاز ضغط الصدر', 'MACHINE'],
+  // cardio : aucun exercice de musculation lié, mais signalables en panne et affichés dans « Machines »
+  ['tapis', 'Tapis de course', 'بساط الجري', 'MACHINE'],
+  ['elliptique', 'Vélo elliptique', 'الدراجة البيضاوية', 'MACHINE'],
+  ['velo', 'Vélo assis', 'دراجة ثابتة', 'MACHINE'],
+  ['rameur', 'Rameur', 'آلة التجديف', 'MACHINE'],
 ];

@@ -1,0 +1,20 @@
+/* Contenu de l'app : programmes (liste + éditeur), règles */
+.mg-prog {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+  align-items: start;
+}
+@media (min-width: 1100px) {
+  .mg-prog {
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
+}
+.mg-rules {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 800px) {
+  .mg-rules {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

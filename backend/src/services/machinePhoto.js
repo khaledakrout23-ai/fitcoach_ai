@@ -3,6 +3,7 @@ const { Op } = require('sequelize');
 const { Equipment } = require('../models');
 const { HttpError } = require('../middleware/errors');
 const { generate, hasAI } = require('./gemini');
+const { parsePhoto } = require('./images');
 
 /**
  * @param {string} dataUrl  photo « data:image/...;base64,... »
@@ -11,8 +12,7 @@ const { generate, hasAI } = require('./gemini');
  *   newType : aucun type existant ne correspond, l'IA en propose un nouveau
  */
 async function identifyMachine(dataUrl) {
-  const m = String(dataUrl || '').match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
-  if (!m) throw new HttpError(400, 'VALIDATION', 'Photo invalide.');
+  const photo = parsePhoto(dataUrl);
   if (!hasAI()) throw new HttpError(503, 'NO_AI', 'La reconnaissance par photo nécessite l’IA (clé GEMINI_API_KEY).');
   const equipment = await Equipment.findAll({ where: { code: { [Op.ne]: 'poids_du_corps' } } });
   const list = equipment.map((e) => `${e.code} | ${e.nameFr}`).join('\n');
@@ -21,7 +21,7 @@ async function identifyMachine(dataUrl) {
     messages: [
       {
         role: 'user',
-        image: { mimeType: m[1], data: m[2] },
+        image: { mimeType: photo.mimeType, data: photo.base64 },
         text: `Quel équipement est sur cette photo ? Types d'équipement existants (code | nom) :
 ${list}
 

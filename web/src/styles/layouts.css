@@ -1,0 +1,448 @@
+/* ==========================================================================
+   Mises en page : app membre (onglets en bas), espace salle (barre latérale), connexion
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- App membre */
+.app-frame {
+  min-height: 100dvh;
+  max-width: var(--app-max);
+  margin: 0 auto;
+  position: relative;
+  background: var(--bg);
+}
+@media (min-width: 600px) {
+  body:has(.app-frame) {
+    background: var(--bg-deep);
+  }
+  .app-frame {
+    box-shadow: 0 0 0 1px var(--line);
+  }
+}
+.page {
+  padding: calc(var(--s4) + var(--safe-top)) var(--gutter) var(--s6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+.with-tabs .page {
+  padding-bottom: calc(var(--tabbar-h) + var(--safe-bottom) + var(--s6));
+}
+.page.no-pad-top {
+  padding-top: var(--safe-top);
+}
+
+/* En-tête d'écran : titre à gauche, action à droite */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 56px;
+  margin-bottom: var(--s2);
+}
+.app-header h1 {
+  flex: 1;
+  font-size: 32px;
+}
+.app-header.compact h1 {
+  font-size: 22px;
+}
+
+/* Barre d'onglets (5 onglets) : pastille ember avec icône + libellé pour l'onglet actif */
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--app-max);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 8px 12px calc(10px + var(--safe-bottom));
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+[data-theme='dark'] .tabbar {
+  border-top-color: transparent;
+  background: linear-gradient(to top, var(--bg) 80%, rgba(11, 13, 16, 0.9));
+}
+.tabbar a {
+  height: 48px;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 24px;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+  transition: background var(--t-med) var(--ease), color var(--t-med);
+}
+.tabbar a .tab-label {
+  display: none;
+}
+.tabbar a.active {
+  background: var(--ember);
+  color: var(--on-ember);
+  padding: 0 16px;
+}
+.tabbar a.active .tab-label {
+  display: inline;
+}
+
+/* Écran plein (séance, exercice) : pas d'onglets */
+.fullscreen {
+  min-height: 100dvh;
+}
+
+/* ---------------------------------------------------------------- Connexion / onboarding */
+.auth {
+  min-height: 100dvh;
+  max-width: var(--app-max);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--s4) + var(--safe-top)) var(--gutter) calc(var(--s4) + var(--safe-bottom));
+  gap: var(--s4);
+}
+.auth-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  min-height: 56px;
+}
+.auth h1 {
+  font-size: 32px;
+}
+.auth .lead {
+  color: var(--text-muted);
+  font-size: 17px;
+}
+.auth-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  text-align: center;
+}
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+.logo img {
+  height: 40px;
+  width: auto;
+}
+.logo .wordmark {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.logo .wordmark small {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Connexion de l'équipe sur grand écran : formulaire + photo de la salle (D1) */
+.split-auth {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.split-auth .split-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s4);
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: calc(var(--s6) + var(--safe-top)) var(--gutter) var(--s6);
+}
+.split-auth .split-visual {
+  display: none;
+}
+@media (min-width: 1000px) {
+  .split-auth {
+    grid-template-columns: minmax(480px, 1fr) 1.1fr;
+  }
+  .split-auth .split-visual {
+    display: flex;
+    align-items: flex-end;
+    margin: 16px;
+    border-radius: 28px;
+    padding: 40px;
+    background: radial-gradient(circle at 70% 30%, rgba(255, 107, 26, 0.28), transparent 45%),
+      linear-gradient(160deg, #1d2128, #0b0d10 70%);
+    color: #f4f2ee;
+  }
+}
+
+/* ---------------------------------------------------------------- Espace salle */
+.staff {
+  min-height: 100dvh;
+  display: flex;
+  background: var(--bg);
+}
+.sidebar {
+  width: 248px;
+  flex: none;
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  overflow-y: auto;
+  background: var(--sidebar);
+  padding: 20px 14px;
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  border-inline-end: 1px solid transparent;
+}
+[data-theme='light'] .sidebar {
+  border-inline-end-color: var(--line);
+}
+@media (min-width: 1024px) {
+  .sidebar {
+    display: flex;
+  }
+}
+.gym-card {
+  min-height: 52px;
+  border-radius: 14px;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+}
+.gym-card .name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.gym-card .sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.side-nav .head {
+  font-size: 12px;
+  color: var(--text-faint);
+  padding: 14px 12px 6px;
+}
+.side-nav a {
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.side-nav a:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+.side-nav a.active {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.side-nav a.active .icon {
+  color: var(--ember-text);
+}
+.side-nav a .grow {
+  flex: 1;
+}
+.side-user {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+}
+.side-user .name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.side-user .role {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.staff-main {
+  flex: 1;
+  min-width: 0;
+  padding: calc(var(--s4) + var(--safe-top)) var(--gutter) calc(var(--tabbar-h) + var(--safe-bottom) + var(--s6));
+}
+@media (min-width: 1024px) {
+  .staff-main {
+    padding: 32px 32px 48px;
+  }
+}
+.staff-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+/* En-tête de page de l'espace salle (D2 : « Bonjour Sami » + recherche + actions) */
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--s3) var(--s4);
+  margin-bottom: var(--s2);
+}
+.page-head .titles {
+  flex: 1;
+  min-width: 220px;
+}
+.page-head h1 {
+  font-size: 28px;
+}
+@media (min-width: 1024px) {
+  .page-head h1 {
+    font-size: 32px;
+  }
+}
+.page-head .subtitle {
+  color: var(--text-muted);
+  font-size: 15px;
+  margin-top: 2px;
+}
+.page-head .actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+}
+.search {
+  position: relative;
+  min-width: 240px;
+  flex: 1;
+  max-width: 340px;
+}
+.search .icon {
+  position: absolute;
+  inset-inline-start: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.search input {
+  width: 100%;
+  min-height: 44px;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  padding-inline: 44px 14px;
+  font-size: 15px;
+  outline: none;
+}
+.search input:focus {
+  border-color: var(--ember);
+}
+
+/* Grilles de l'espace salle */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s3);
+}
+@media (min-width: 900px) {
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--s4);
+  }
+}
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+}
+@media (min-width: 1100px) {
+  .split {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+  .split.even {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .split.detail {
+    grid-template-columns: minmax(0, 1fr) 400px;
+  }
+}
+
+/* Onglets du bas de l'espace salle sur téléphone (Accueil · Membres · Scanner · Pannes · Plus) */
+.staff-tabbar {
+  position: fixed;
+  bottom: 0;
+  inset-inline: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 8px 12px calc(10px + var(--safe-bottom));
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+.staff-tabbar a {
+  height: 48px;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 24px;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+.staff-tabbar a .tab-label {
+  display: none;
+}
+.staff-tabbar a.active {
+  background: var(--ember);
+  color: var(--on-ember);
+  padding: 0 16px;
+}
+.staff-tabbar a.active .tab-label {
+  display: inline;
+}
+@media (min-width: 1024px) {
+  .staff-tabbar {
+    display: none;
+  }
+  .toasts {
+    bottom: 24px;
+  }
+}
+
+/* Colonnes kanban (Pannes : Nouveaux → En cours → Réparées) */
+.kanban {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+}
+@media (min-width: 900px) {
+  .kanban {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

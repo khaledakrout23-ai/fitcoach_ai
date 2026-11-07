@@ -31,7 +31,7 @@ async function sendMail(mail) {
     return;
   }
   try {
-    await getTransporter().sendMail({ from: process.env.MAIL_FROM || `FitCoach AI <${process.env.SMTP_USER}>`, ...mail });
+    await getTransporter().sendMail({ from: process.env.MAIL_FROM || `Kammel <${process.env.SMTP_USER}>`, ...mail });
   } catch (err) {
     console.error('[E-mail] envoi impossible :', err.message);
     throw new HttpError(502, 'MAIL_FAILED', 'Impossible d’envoyer l’e-mail pour le moment. Réessayez plus tard.');

@@ -1,0 +1,403 @@
+/* Écran Repas + eau (B7) */
+
+/* Semaine */
+.ml-week {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  margin-inline: calc(var(--s2) * -1);
+}
+.ml-days {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+}
+.ml-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 60px;
+  border: 0;
+  border-radius: var(--r-btn);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 18px;
+  font-weight: 500;
+}
+.ml-day .ml-day-name {
+  font-size: 12px;
+  font-weight: 400;
+}
+.ml-day.today:not(.on) {
+  color: var(--text);
+}
+.ml-day.on {
+  background: var(--ember);
+  color: var(--on-ember);
+}
+.ml-day:disabled {
+  color: var(--text-faint);
+}
+
+/* Budget du jour */
+.ml-budget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s4);
+}
+.ml-big {
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.ml-budget-line {
+  display: flex;
+  gap: var(--s6);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.ml-strong {
+  color: var(--text);
+}
+.ml-macros {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s2);
+  margin-top: var(--s2);
+}
+.ml-macro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s1);
+  text-align: center;
+}
+.ml-macro .ring {
+  margin-bottom: var(--s2);
+}
+
+/* Conseil du coach */
+.ml-insight {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+  border-radius: 14px;
+  background: var(--ember-soft);
+  font-size: 15px;
+  font-weight: 500;
+}
+.ml-insight img {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  margin-top: 1px;
+}
+
+/* Eau */
+.ml-water {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+.ml-water .card-head {
+  margin-bottom: 0;
+}
+.ml-water-top {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+}
+.ml-water-num {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1;
+}
+.ml-glasses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  color: var(--text-faint);
+}
+.ml-glasses .icon.on {
+  color: var(--hydro);
+}
+.ml-quick {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s2);
+}
+.ml-quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 60px;
+  padding: var(--s2) 4px;
+  border: 0;
+  border-radius: var(--r-btn);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 15px;
+  transition: background var(--t-fast);
+}
+.ml-quick-btn:hover:not(:disabled) {
+  background: var(--surface-3);
+}
+.ml-quick-btn.main {
+  background: var(--hydro-soft);
+  color: var(--hydro);
+}
+.ml-quick-btn:disabled {
+  opacity: 0.5;
+}
+.ml-drinks {
+  margin-inline: calc(var(--s4) * -1);
+  padding-inline: var(--s4);
+}
+.chip.ml-drink[aria-pressed='true'] {
+  border-color: transparent;
+  background: var(--hydro-soft);
+  color: var(--hydro);
+}
+.ml-reminders .toggle-row {
+  padding: 0;
+}
+
+/* Calcul de l'eau */
+.ml-how {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+.ml-how li {
+  display: flex;
+  gap: var(--s3);
+  align-items: flex-start;
+}
+.ml-how li > .icon {
+  color: var(--hydro);
+  flex: none;
+}
+.ml-how li .grow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Liste des repas */
+.ml-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  margin-top: var(--s2);
+}
+.ml-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.ml-group-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ml-group-head h2 {
+  margin: 0;
+}
+.ml-row-wrap {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--danger-soft);
+}
+.ml-row-bin {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: var(--s5);
+  display: flex;
+  align-items: center;
+  color: var(--danger);
+}
+.ml-row {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 72px;
+  padding: var(--s2) var(--s2) var(--s2) 0;
+  padding-inline: 0 var(--s2);
+  border: 0;
+  background: var(--bg);
+  color: var(--text);
+  text-align: start;
+  touch-action: pan-y;
+  transition: transform var(--t-med) var(--ease);
+}
+.ml-thumb {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--surface-2);
+  color: var(--text-faint);
+}
+.ml-row-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ml-row-text .ellipsis {
+  display: block;
+}
+.ml-row-kcal {
+  font-size: 17px;
+  padding-inline-start: var(--s2);
+}
+.ml-p {
+  color: var(--protein);
+}
+.ml-c {
+  color: var(--carbs);
+}
+.ml-f {
+  color: var(--fat);
+}
+.ml-add-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  min-height: 52px;
+  border: 0;
+  border-radius: var(--r-btn);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+[data-theme='light'] .ml-add-inline {
+  border: 1px dashed var(--line);
+}
+.ml-add-inline:hover:not(:disabled) {
+  color: var(--text);
+}
+
+/* Bouton flottant « Ajouter un repas » */
+.ml-fab-wrap {
+  position: sticky;
+  bottom: calc(var(--tabbar-h) + var(--safe-bottom) + var(--s3));
+  z-index: 20;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+  margin-top: var(--s2);
+}
+.ml-fab {
+  pointer-events: auto;
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-pop);
+}
+
+/* Feuille d'ajout */
+.ml-actions .ml-action-sub {
+  display: block;
+  margin-top: 2px;
+}
+.ml-actions button {
+  min-height: 64px;
+}
+.ml-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  align-self: flex-start;
+}
+.ml-photo {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: var(--r-card);
+  background: var(--surface-2);
+}
+.ml-spin {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border: 2px solid var(--ember);
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.ml-ngrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s2);
+}
+.ml-ncell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--s3) 4px;
+  border-radius: var(--r-btn);
+  background: var(--surface-2);
+  text-align: center;
+}
+.card.flat .ml-ncell {
+  background: var(--surface-3);
+}
+.ml-search {
+  max-width: none;
+  min-width: 0;
+}
+.ml-search input {
+  background: var(--surface-2);
+  min-height: 48px;
+}
+.ml-foods {
+  display: flex;
+  flex-direction: column;
+}
+.ml-foods[aria-busy='true'] {
+  opacity: 0.6;
+}
+.ml-food {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 60px;
+  padding: var(--s2) 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  text-align: start;
+}
+.ml-src {
+  min-height: 20px;
+  margin-inline-start: var(--s2);
+  padding: 0 6px;
+  font-size: 11px;
+}
+.ml-budget .ring-center,
+.ml-water-top .ring-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}

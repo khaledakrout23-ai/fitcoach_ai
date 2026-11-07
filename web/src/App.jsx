@@ -1,82 +1,78 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
-import { homeFor, useAuth } from './auth';
-import Shell from './components/Shell';
-import { Spinner } from './components/ui';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import VerifyEmail from './pages/VerifyEmail';
-import ForgotPassword from './pages/ForgotPassword';
-import Home from './pages/athlete/Home';
-import Profile from './pages/athlete/Profile';
-import Program from './pages/athlete/Program';
-import Session from './pages/athlete/Session';
-import ExerciseSheet from './pages/athlete/ExerciseSheet';
-import Coach from './pages/athlete/Coach';
-import Progress from './pages/athlete/Progress';
-import ReportMachine from './pages/athlete/ReportMachine';
-import ManagerDashboard from './pages/manager/Dashboard';
-import Members from './pages/manager/Members';
-import Machines from './pages/manager/Machines';
-import Reports from './pages/manager/Reports';
-import GymSettings from './pages/manager/GymSettings';
-import AdminDashboard from './pages/admin/Dashboard';
-import Gyms from './pages/admin/Gyms';
-import Exercises from './pages/admin/Exercises';
-import Users from './pages/admin/Users';
-import AdminMachines from './pages/admin/Machines';
+import { lazy, Suspense } from 'react';
+import { useRoutes } from 'react-router-dom';
+import { RequireAuth, RootRedirect, NotFound } from './app/guards';
+import AthleteLayout, { FullscreenLayout } from './layouts/AthleteLayout';
+import StaffLayout from './layouts/StaffLayout';
 
-// Protège les pages selon le rôle (chaque rôle accède uniquement à ses fonctionnalités)
-function RequireRole({ role }) {
-  const { user, loading } = useAuth();
-  if (loading) return <Spinner />;
-  if (!user) return <Navigate to="/connexion" replace />;
-  if (user.role !== role) return <Navigate to={homeFor(user.role)} replace />;
-  return <Shell />;
-}
+// Chaque fonctionnalité déclare ses routes dans son propre fichier routes.jsx :
+// - routes publiques / onboarding : chemins complets ;
+// - app membre : { tab: [...] } sous /app avec la barre d'onglets, { full: [...] } sous /app en plein écran ;
+// - espace salle et administration : chemins relatifs à /salle et /admin.
+import authRoutes from './features/auth/routes';
+import onboardingRoutes from './features/onboarding/routes';
+import home from './features/home/routes';
+import training from './features/training/routes';
+import session from './features/session/routes';
+import meals from './features/meals/routes';
+import coach from './features/coach/routes';
+import account from './features/account/routes';
+import report from './features/report/routes';
+import staffOps from './features/staff/ops/routes';
+import staffManage from './features/staff/manage/routes';
+import staffContent from './features/staff/content/routes';
+import adminRoutes from './features/admin/routes';
 
-function PublicOnly({ children }) {
-  const { user, loading } = useAuth();
-  if (loading) return <Spinner />;
-  if (user) return <Navigate to={homeFor(user.role)} replace />;
-  return children;
+const athlete = [home, training, session, meals, coach, account, report];
+
+const routes = [
+  { path: '/', element: <RootRedirect /> },
+  ...authRoutes,
+  ...onboardingRoutes,
+  {
+    path: '/app',
+    element: (
+      <RequireAuth roles={['SPORTIF']}>
+        <AthleteLayout />
+      </RequireAuth>
+    ),
+    children: athlete.flatMap((f) => f.tab || []),
+  },
+  {
+    path: '/app',
+    element: (
+      <RequireAuth roles={['SPORTIF']}>
+        <FullscreenLayout />
+      </RequireAuth>
+    ),
+    children: athlete.flatMap((f) => f.full || []),
+  },
+  {
+    path: '/salle',
+    element: (
+      <RequireAuth staff>
+        <StaffLayout />
+      </RequireAuth>
+    ),
+    children: [...staffOps, ...staffManage, ...staffContent],
+  },
+  {
+    path: '/admin',
+    element: (
+      <RequireAuth roles={['ADMIN']}>
+        <StaffLayout admin />
+      </RequireAuth>
+    ),
+    children: adminRoutes,
+  },
+  { path: '*', element: <NotFound /> },
+];
+
+// Kit de composants pour le contrôle visuel : développement uniquement (supprimé du build de production)
+if (import.meta.env.DEV) {
+  const DevKit = lazy(() => import('./app/DevKit'));
+  routes.unshift({ path: '/dev/kit', element: <Suspense fallback={null}><DevKit /></Suspense> });
 }
 
 export default function App() {
-  return (
-    <Routes>
-      <Route path="/connexion" element={<PublicOnly><Login /></PublicOnly>} />
-      <Route path="/inscription" element={<PublicOnly><Register /></PublicOnly>} />
-      <Route path="/verification" element={<PublicOnly><VerifyEmail /></PublicOnly>} />
-      <Route path="/mot-de-passe-oublie" element={<PublicOnly><ForgotPassword /></PublicOnly>} />
-
-      <Route path="/app" element={<RequireRole role="SPORTIF" />}>
-        <Route index element={<Home />} />
-        <Route path="profil" element={<Profile />} />
-        <Route path="programme" element={<Program />} />
-        <Route path="seance/:id" element={<Session />} />
-        <Route path="exercice/:id" element={<ExerciseSheet />} />
-        <Route path="coach" element={<Coach />} />
-        <Route path="progression" element={<Progress />} />
-        <Route path="panne" element={<ReportMachine />} />
-      </Route>
-
-      <Route path="/gerant" element={<RequireRole role="GERANT" />}>
-        <Route index element={<ManagerDashboard />} />
-        <Route path="abonnes" element={<Members />} />
-        <Route path="machines" element={<Machines />} />
-        <Route path="pannes" element={<Reports />} />
-        <Route path="salle" element={<GymSettings />} />
-      </Route>
-
-      <Route path="/admin" element={<RequireRole role="ADMIN" />}>
-        <Route index element={<AdminDashboard />} />
-        <Route path="salles" element={<Gyms />} />
-        <Route path="machines" element={<AdminMachines />} />
-        <Route path="exercices" element={<Exercises />} />
-        <Route path="utilisateurs" element={<Users />} />
-      </Route>
-
-      <Route path="*" element={<Navigate to="/connexion" replace />} />
-    </Routes>
-  );
+  return useRoutes(routes);
 }

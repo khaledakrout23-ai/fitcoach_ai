@@ -140,5 +140,5 @@ test('coach en mode simple : comprend le français, l’arabe et la derja', () =
   assert.match(fallbackReply('la machine est occupée', 'fr'), /Occupée/);
   assert.match(fallbackReply('شنوة نأكل بعد الحصة؟ بروتين', 'ar'), /البروتين/);
   assert.match(fallbackReply('3andi wja3 fi rkobti', 'fr'), /médecin/);
-  assert.match(fallbackReply('bonjour', 'fr'), /coach FitCoach/);
+  assert.match(fallbackReply('bonjour', 'fr'), /coach Kammel/);
 });

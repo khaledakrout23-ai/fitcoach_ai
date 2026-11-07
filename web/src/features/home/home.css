@@ -1,0 +1,247 @@
+/* Accueil (B2), Gym en direct (B3), notifications */
+.hm-block {
+  display: block;
+}
+.hm-live .muted-text,
+.gl .muted-text {
+  color: var(--text-muted);
+}
+
+/* En-tête : avatar, salut, cloche */
+.hm-top {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 56px;
+  margin-bottom: var(--s1);
+}
+.hm-top .h2 {
+  font-size: 22px;
+}
+.hm-avatar {
+  color: var(--ember-text);
+  background: var(--surface-2);
+  font-weight: 500;
+}
+
+/* Bandeau abonnement */
+.hm-sub {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+.hm-sub > .icon {
+  flex: none;
+}
+
+.hm-in .status {
+  min-height: 36px;
+  padding: 0 14px;
+  white-space: normal;
+}
+
+/* Séance du jour : visuel en dégradé (pas de photo fournie) */
+.hm-session {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  overflow: hidden;
+}
+.hm-hero {
+  position: relative;
+  margin: calc(var(--s4) * -1) calc(var(--s4) * -1) 0;
+  min-height: 112px;
+  padding: var(--s4);
+  background:
+    radial-gradient(120% 90% at 85% 10%, var(--ember-soft), transparent 60%),
+    linear-gradient(180deg, var(--surface-2), var(--surface));
+}
+.hm-hero.small-hero {
+  min-height: 96px;
+}
+.hm-hero-icon {
+  position: absolute;
+  inset-inline-end: var(--s5);
+  bottom: var(--s4);
+  color: var(--text-faint);
+  opacity: 0.5;
+}
+.hm-name {
+  font-size: 28px;
+}
+.hm-meta {
+  gap: var(--s4);
+}
+.hm-tags {
+  gap: var(--s2);
+}
+.hm-actions {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: var(--s3);
+  margin-top: var(--s1);
+}
+.hm-actions .btn {
+  padding-inline: var(--s3);
+}
+
+/* Bande de la semaine */
+.hm-week {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  text-align: center;
+}
+.hm-week li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.hm-day {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-faint);
+  border: 1.5px solid transparent;
+}
+.hm-week .hm-planned .hm-day {
+  border-color: var(--line);
+  color: var(--text);
+}
+.hm-week .hm-done .hm-day {
+  background: var(--ember);
+  color: var(--on-ember);
+}
+.hm-week .hm-today:not(.hm-done) .hm-day {
+  border-color: var(--ember);
+  color: var(--text);
+}
+
+/* Carte Gym en direct */
+.card.link.hm-live {
+  width: 100%;
+  border: 0;
+  text-align: start;
+  color: var(--text);
+  font: inherit;
+}
+.hm-live .card-head {
+  margin-bottom: var(--s2);
+}
+.hm-live-body {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s4);
+}
+.hm-count {
+  align-items: baseline;
+}
+.hm-minibars {
+  width: 42%;
+  max-width: 150px;
+  flex: none;
+}
+
+/* Nutrition */
+.hm-nutri {
+  display: flex;
+  align-items: center;
+  gap: var(--s5);
+}
+.hm-water {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-top: var(--s4);
+}
+
+.card.link.hm-report {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+
+/* ---------------------------------------------------------------- Gym en direct (feuille) */
+.gl-count {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: var(--s4);
+}
+.gl-count .display {
+  font-size: 80px;
+  line-height: 1;
+  grid-row: 1 / 3;
+}
+.gl-label {
+  white-space: pre-line;
+  line-height: 1.3;
+}
+.gl-delta {
+  justify-self: end;
+}
+.gl-status {
+  gap: var(--s2);
+  align-items: baseline;
+}
+.gl-status .live-dot {
+  transform: translateY(-1px);
+}
+.gl-bars {
+  padding-top: 24px;
+}
+
+/* ---------------------------------------------------------------- Notifications */
+.nt-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+  width: 100%;
+  padding: var(--s4);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: start;
+  font: inherit;
+}
+.nt-item + .nt-item {
+  border-top: 1px solid var(--line);
+}
+button.nt-item:hover {
+  background: var(--surface-2);
+}
+.nt-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  background: var(--surface-2);
+  color: var(--text-muted);
+}
+.nt-item.nt-unread .nt-icon {
+  background: var(--ember-soft);
+  color: var(--ember-text);
+}
+.nt-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ember);
+  flex: none;
+  margin-top: 8px;
+}
+.nt-body {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}

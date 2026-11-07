@@ -20,7 +20,7 @@ function ex(nameFr, nameAr, nameEn, primary, secondary, pattern, equipment, acce
   };
 }
 
-module.exports = [
+const list = [
   // ---------------------------------------------------------------- Pectoraux
   ex('Développé couché à la barre', 'ضغط الصدر بالبار', 'Barbell bench press', 'pectoraux', ['triceps', 'epaules'], 'poussee_horizontale', 'banc_couche', ['barre'], 2, ['epaule', 'poignet'], '6-10',
     { fr: ['Développe la force du haut du corps', 'Muscle les pectoraux, les triceps et les épaules', 'Facile à mesurer pour suivre ses progrès'],
@@ -268,4 +268,54 @@ module.exports = [
     { fr: ['Renforce les obliques', 'Améliore la stabilité', 'Protège le dos'],
       ar: ['يقوّي العضلات الجانبية للبطن', 'يحسّن الثبات', 'يحمي الظهر'] },
     { fr: ['Hanche qui tombe', 'Épaule loin du coude'], ar: ['الورك ينزل', 'الكتف بعيد عن المرفق'] }),
+  // ---------------------------------------------------------------- Ajouts Kammel (écrans Exercices et Programmes)
+  ex('Presse pectorale assise', 'ضغط الصدر بالجهاز وأنت قاعد', 'Seated chest press', 'pectoraux', ['triceps', 'epaules'], 'poussee_horizontale', 'chest_press', [], 1, ['epaule'], '10-12',
+    { fr: ['Mouvement guidé, idéal pour débuter', 'Charge facile à régler', 'Travaille les pectoraux sans barre'],
+      ar: ['حركة موجّهة مناسبة للمبتدئين', 'الوزن ساهل يتبدّل', 'يخدم الصدر بلا بار'] },
+    { fr: ['Siège trop bas : poignées sous la poitrine', 'Décoller le dos du dossier'], ar: ['الكرسي مهبّط برشا', 'تبعيد الظهر على الكرسي'] }),
+  ex('Pompes inclinées', 'تمرين الضغط المائل', 'Incline push-up', 'pectoraux', ['triceps', 'epaules'], 'poussee_horizontale', 'poids_du_corps', ['banc'], 1, ['poignet'], '10-15',
+    { fr: ['Plus facile que les pompes au sol', 'Doux pour les épaules', 'Se fait sur un simple banc'],
+      ar: ['أسهل من الضغط على الأرض', 'لطيف على الكتف', 'يتعمل على بنك عادي'] },
+    { fr: ['Laisser tomber les hanches', 'Mains trop écartées'], ar: ['ترك الحوض ينزل', 'اليدين متباعدين برشا'] }),
+  ex('Step-up bas', 'الطلوع على البنك', 'Low step-up', 'quadriceps', ['fessiers'], 'fente', 'poids_du_corps', ['banc'], 1, ['genou', 'hanche'], '10-12',
+    { fr: ['Travaille une jambe à la fois', 'Améliore l’équilibre', 'Hauteur facile à adapter'],
+      ar: ['يخدم رجل برجل', 'يحسّن التوازن', 'العلو ساهل يتبدّل'] },
+    { fr: ['Pousser avec la jambe du bas', 'Genou qui rentre vers l’intérieur'], ar: ['الدفع بالرجل اللي لوطة', 'الركبة تدخل للداخل'] }),
 ];
+
+// Zones à éviter ajoutées (cou, haut du dos, hanche, épaule pour les tirages) — écran « À éviter si douleur »
+const EXTRA_ZONES = {
+  'Squat à la barre': ['hanche'],
+  'Squat à la Smith': ['hanche'],
+  'Goblet squat': ['hanche'],
+  'Fente bulgare': ['hanche'],
+  'Fentes marchées aux haltères': ['hanche'],
+  'Hip thrust à la barre': ['hanche'],
+  'Soulevé de terre roumain': ['hanche'],
+  'Soulevé de terre roumain aux haltères': ['hanche'],
+  'Swing kettlebell': ['hanche'],
+  'Soulevé de terre': ['hanche', 'haut_dos'],
+  'Développé militaire à la barre': ['cou'],
+  'Crunch': ['cou'],
+  'Rowing barre': ['haut_dos'],
+  'Rowing haltère un bras': ['haut_dos'],
+  'Rowing assis à la machine': ['haut_dos'],
+  'Rowing inversé': ['haut_dos'],
+  'Tractions': ['haut_dos'],
+  'Tractions assistées à l’élastique': ['haut_dos'],
+  'Tirage vertical à la machine': ['epaule', 'haut_dos'],
+  'Face pull à la poulie': ['haut_dos'],
+};
+
+// Séries par défaut selon le niveau, tirées de la plage de répétitions (« 8-12 » → 3x12 / 3x10 / 4x8)
+function defaultSetsOf(reps) {
+  const [low, high] = String(reps).match(/\d+/g).map(Number);
+  const hi = high || low;
+  return { DEBUTANT: `3x${hi}`, INTERMEDIAIRE: `3x${Math.round((low + hi) / 2)}`, AVANCE: `4x${low}` };
+}
+
+module.exports = list.map((e) => ({
+  ...e,
+  injuryZones: [...new Set([...e.injuryZones, ...(EXTRA_ZONES[e.nameFr] || [])])],
+  defaultSets: defaultSetsOf(e.defaultReps),
+}));

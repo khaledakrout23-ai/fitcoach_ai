@@ -19,6 +19,25 @@ function jsonArray(DataTypes, field) {
   };
 }
 
+// Colonne JSON (objet) : toujours relue comme un objet JavaScript ({} si vide ou illisible).
+function jsonObject(DataTypes, field) {
+  return {
+    type: DataTypes.JSON,
+    allowNull: true,
+    get() {
+      let value = this.getDataValue(field);
+      if (typeof value === 'string') {
+        try {
+          value = JSON.parse(value);
+        } catch {
+          value = null;
+        }
+      }
+      return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+    },
+  };
+}
+
 // Montant DECIMAL : mysql2 le renvoie en texte, on le convertit en nombre.
 function decimal(DataTypes, field, precision = 10, scale = 3) {
   return {
@@ -32,4 +51,4 @@ function decimal(DataTypes, field, precision = 10, scale = 3) {
   };
 }
 
-module.exports = { jsonArray, decimal };
+module.exports = { jsonArray, jsonObject, decimal };

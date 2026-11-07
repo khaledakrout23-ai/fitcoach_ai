@@ -1,0 +1,334 @@
+/* ==========================================================================
+   Base : remise à zéro, typographie (A4), utilitaires de mise en page
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.25;
+}
+:lang(fr) h1,
+:lang(en) h1,
+:lang(fr) h2,
+:lang(en) h2,
+:lang(fr) .display,
+:lang(en) .display {
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--ember-text);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--ember);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--ember-soft);
+}
+
+/* Échelle typographique : Display 48/60 · H1 32/40 · H2 24/30 · H3 20/26 · Body-L 18/28 · Body 16/26 · Small 14/22 · Caption 12/18 */
+.display {
+  font-size: 48px;
+  line-height: 1.25;
+  font-weight: 500;
+}
+.h1 {
+  font-size: 32px;
+  line-height: 1.25;
+  font-weight: 500;
+}
+.h2 {
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 500;
+}
+.h3 {
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 500;
+}
+.body-l {
+  font-size: 18px;
+  line-height: 1.55;
+}
+.small {
+  font-size: 14px;
+  line-height: 1.55;
+}
+.caption {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.muted {
+  color: var(--text-muted);
+}
+.faint {
+  color: var(--text-faint);
+}
+.ember {
+  color: var(--ember-text);
+}
+.ok-text {
+  color: var(--ok);
+}
+.warn-text {
+  color: var(--warn);
+}
+.danger-text {
+  color: var(--danger);
+}
+.hydro-text {
+  color: var(--hydro);
+}
+.w300 {
+  font-weight: 300;
+}
+.w500 {
+  font-weight: 500;
+}
+.w600 {
+  font-weight: 600;
+}
+.strike {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* Grand chiffre (kg, kcal, litres, affluence) */
+.big-num {
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.big-num small,
+.num-unit {
+  font-size: 0.32em;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0;
+  margin-inline-start: 4px;
+}
+
+/* Les nombres restent de gauche à droite en arabe (« 1 240 » et pas « 240 1 »).
+   .num est un bloc en ligne : sur un élément bloc ou un enfant de flex, mettre le nombre dans un <span class="num">. */
+.num {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Petit titre de section avec filet (A4) */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin: var(--s6) 0 var(--s3);
+}
+.eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.eyebrow.plain::after {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- Mise en page */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+.stack-2 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.stack-4 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+.stack-6 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s6);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+.row-2 {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+.row-top {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+}
+.between {
+  justify-content: space-between;
+}
+.wrap {
+  flex-wrap: wrap;
+}
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s3);
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s3);
+}
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s3);
+}
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.text-center {
+  text-align: center;
+}
+.text-end {
+  text-align: end;
+}
+.mt-2 {
+  margin-top: var(--s2);
+}
+.mt-4 {
+  margin-top: var(--s4);
+}
+.mt-6 {
+  margin-top: var(--s6);
+}
+.mb-4 {
+  margin-bottom: var(--s4);
+}
+.full {
+  width: 100%;
+}
+.hidden {
+  display: none !important;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Écran de démarrage (B1.1) : logo centré avec une lueur ember */
+.splash {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 107, 26, 0.18), transparent 38%), #0b0d10;
+}
+.splash img {
+  height: 96px;
+  width: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

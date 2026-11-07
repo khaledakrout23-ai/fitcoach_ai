@@ -1,48 +1,55 @@
 // npm run db:setup
-// Crée la base MySQL (si besoin), crée toutes les tables avec Sequelize, puis ajoute les données de démo.
-// ATTENTION : supprime et recrée les tables existantes.
+// Crée la base (si besoin), recrée toutes les tables avec Sequelize, puis ajoute les données de démo Kammel.
+// ATTENTION : supprime et recrée les tables existantes. Refusé en production ; base distante : ajouter --yes.
 require('dotenv').config();
 const mysql = require('mysql2/promise');
-const { sequelize } = require('../models');
-const { DB_NAME } = require('../config/database');
-const { seed } = require('../seed/seed');
+const { connectionSettings, sslOptions } = require('../config/database');
+
+const LOCAL_HOSTS = ['localhost', '127.0.0.1', '::1'];
 
 async function main() {
-  console.log(`> Connexion à MySQL (${process.env.DB_USER || 'root'}@${process.env.DB_HOST || 'localhost'})...`);
+  if (process.env.NODE_ENV === 'production') {
+    console.error('db:setup supprime toutes les données : refusé avec NODE_ENV=production.');
+    process.exit(1);
+  }
+  const settings = connectionSettings();
+  if (!LOCAL_HOSTS.includes(settings.host) && !process.argv.includes('--yes')) {
+    console.error(`La base "${settings.database}" est sur ${settings.host} (pas en local). Toutes ses tables seront supprimées.`);
+    console.error('Relancez avec : npm run db:setup -- --yes');
+    process.exit(1);
+  }
+  if (!/^[\w$-]{1,64}$/.test(settings.database)) throw new Error('Nom de base invalide.');
+
+  console.log(`> Connexion à MySQL (${settings.user}@${settings.host}:${settings.port})...`);
   const conn = await mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
+    host: settings.host,
+    port: settings.port,
+    user: settings.user,
+    password: settings.password,
+    ssl: sslOptions(),
   });
-  await conn.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+  await conn.query(`CREATE DATABASE IF NOT EXISTS \`${settings.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
   await conn.end();
-  console.log(`> Base "${DB_NAME}" prête.`);
+  console.log(`> Base "${settings.database}" prête.`);
 
-  await sequelize.sync({ force: true });
-  console.log('> Tables créées.');
-
-  const result = await seed();
-  console.log(`> Données de démo ajoutées (${result.exercises} exercices).`);
-  console.log('\nComptes de démonstration :');
-  console.log('  Administrateur : admin@fitcoach.tn / Admin123!');
-  console.log('  Gérant         : gerant@fitcoach.tn / Gerant123!');
-  console.log('  Sportif        : sportif@fitcoach.tn / Sportif123!');
-  await sequelize.close();
+  // chargé seulement maintenant : la base existe
+  const { seed, DEMO_ACCOUNTS, sequelize } = require('../seed/seed');
+  try {
+    await sequelize.sync({ force: true });
+    console.log('> Tables créées.');
+    const started = Date.now();
+    const result = await seed();
+    console.log(`> Données de démo ajoutées en ${Math.round((Date.now() - started) / 1000)} s : ${result.exercises} exercices, ${result.members} membres, ${result.checkins} entrées, ${result.payments} paiements.`);
+    console.log('\nComptes de démonstration (identifiant / mot de passe) :');
+    for (const [label, login, password] of DEMO_ACCOUNTS) console.log(`  ${label.padEnd(44)} ${login.padEnd(22)} ${password}`);
+  } finally {
+    await sequelize.close();
+  }
 }
 
-main().catch(async (err) => {
+main().catch((err) => {
   console.error('\nErreur :', err.message);
-  if (err.code === 'ER_ACCESS_DENIED_ERROR') {
-    console.error('Vérifiez DB_USER et DB_PASSWORD dans le fichier .env (les mêmes que dans MySQL Workbench).');
-  }
-  if (err.code === 'ECONNREFUSED') {
-    console.error('MySQL ne répond pas. Démarrez le serveur MySQL (MySQL80 dans les services Windows).');
-  }
-  try {
-    await sequelize.close();
-  } catch {
-    /* rien */
-  }
+  if (err.code === 'ER_ACCESS_DENIED_ERROR') console.error('Vérifiez DB_USER et DB_PASSWORD (ou DATABASE_URL) dans le fichier .env.');
+  if (err.code === 'ECONNREFUSED') console.error('MySQL ne répond pas. Démarrez le serveur MySQL / MariaDB.');
   process.exit(1);
 });

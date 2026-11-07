@@ -13,13 +13,13 @@ const hash = (code) => crypto.createHash('sha256').update(String(code)).digest('
 
 const TEXTS = {
   fr: {
-    VERIFY: { subject: 'Votre code de vérification FitCoach AI', intro: 'Bienvenue sur FitCoach AI ! Voici votre code pour confirmer votre adresse e-mail :' },
-    RESET: { subject: 'Réinitialisation de votre mot de passe FitCoach AI', intro: 'Vous avez demandé à changer votre mot de passe. Voici votre code :' },
+    VERIFY: { subject: 'Votre code de vérification Kammel', intro: 'Bienvenue sur Kammel ! Voici votre code pour confirmer votre adresse e-mail :' },
+    RESET: { subject: 'Réinitialisation de votre mot de passe Kammel', intro: 'Vous avez demandé à changer votre mot de passe. Voici votre code :' },
     footer: `Ce code est valable ${VALID_MINUTES} minutes. Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.`,
   },
   ar: {
-    VERIFY: { subject: 'رمز التحقق من FitCoach AI', intro: 'مرحباً بك في FitCoach AI! هذا رمز تأكيد بريدك الإلكتروني:' },
-    RESET: { subject: 'إعادة تعيين كلمة السر - FitCoach AI', intro: 'طلبت تغيير كلمة السر. هذا رمزك:' },
+    VERIFY: { subject: 'رمز التحقق من Kammel', intro: 'مرحباً بك في Kammel! هذا رمز تأكيد بريدك الإلكتروني:' },
+    RESET: { subject: 'إعادة تعيين كلمة السر - Kammel', intro: 'طلبت تغيير كلمة السر. هذا رمزك:' },
     footer: `هذا الرمز صالح لمدة ${VALID_MINUTES} دقيقة. إذا لم تطلب ذلك، تجاهل هذه الرسالة.`,
   },
 };
@@ -44,7 +44,7 @@ async function sendCode(user, purpose, { force = false } = {}) {
     subject: t[purpose].subject,
     text: `${t[purpose].intro}\n\n${code}\n\n${t.footer}`,
     html: `<div dir="${dir}" style="font-family:Arial,sans-serif;max-width:480px;margin:auto;padding:24px;color:#16232B">
-  <h2 style="color:#1F6F78;margin:0 0 16px">FitCoach AI</h2>
+  <h2 style="color:#1F6F78;margin:0 0 16px">Kammel</h2>
   <p>${t[purpose].intro}</p>
   <p style="font-size:34px;font-weight:bold;letter-spacing:8px;background:#EEF2F1;border-radius:12px;padding:16px;text-align:center;margin:20px 0">${code}</p>
   <p style="color:#5D6B72;font-size:13px">${t.footer}</p>

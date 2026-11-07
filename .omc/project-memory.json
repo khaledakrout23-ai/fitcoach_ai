@@ -1,0 +1,258 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1794046713768,
+  "projectRoot": "c:\\FitCoach",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "backend": {
+      "path": "backend",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1794046713667,
+      "keyFiles": [
+        "package-lock.json",
+        "package.json"
+      ]
+    },
+    "mobile": {
+      "path": "mobile",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1794046713669,
+      "keyFiles": [
+        "App.js",
+        "app.json",
+        "index.js",
+        "package-lock.json",
+        "package.json"
+      ]
+    },
+    "web": {
+      "path": "web",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1794046713671,
+      "keyFiles": [
+        "index.html",
+        "package-lock.json",
+        "package.json",
+        "vite.config.js"
+      ]
+    },
+    "backend\\node_modules": {
+      "path": "backend\\node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1794046713676,
+      "keyFiles": []
+    },
+    "backend\\src": {
+      "path": "backend\\src",
+      "purpose": "Source code",
+      "fileCount": 3,
+      "lastAccessed": 1794046713676,
+      "keyFiles": [
+        "app.js",
+        "server.js",
+        "utils.js"
+      ]
+    },
+    "backend\\test": {
+      "path": "backend\\test",
+      "purpose": "Test files",
+      "fileCount": 1,
+      "lastAccessed": 1794046713677,
+      "keyFiles": [
+        "logic.test.js"
+      ]
+    },
+    "mobile\\node_modules": {
+      "path": "mobile\\node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1794046713685,
+      "keyFiles": []
+    },
+    "mobile\\src": {
+      "path": "mobile\\src",
+      "purpose": "Source code",
+      "fileCount": 11,
+      "lastAccessed": 1794046713685,
+      "keyFiles": [
+        "api.js",
+        "camera.js",
+        "context.js"
+      ]
+    },
+    "web\\dist": {
+      "path": "web\\dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 2,
+      "lastAccessed": 1794046713687,
+      "keyFiles": [
+        "favicon.svg",
+        "index.html"
+      ]
+    },
+    "web\\node_modules": {
+      "path": "web\\node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1794046713688,
+      "keyFiles": []
+    },
+    "web\\public": {
+      "path": "web\\public",
+      "purpose": "Public files",
+      "fileCount": 1,
+      "lastAccessed": 1794046713688,
+      "keyFiles": [
+        "favicon.svg"
+      ]
+    },
+    "web\\src": {
+      "path": "web\\src",
+      "purpose": "Source code",
+      "fileCount": 8,
+      "lastAccessed": 1794046713690,
+      "keyFiles": [
+        "api.js",
+        "App.jsx",
+        "auth.jsx"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "backend/test/api.test.js",
+      "accessCount": 2,
+      "lastAccessed": 1794064711647,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/routes/me.js",
+      "accessCount": 2,
+      "lastAccessed": 1794064810045,
+      "type": "file"
+    },
+    {
+      "path": "UI_ANALYSIS.md",
+      "accessCount": 1,
+      "lastAccessed": 1793713677006,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/config/database.js",
+      "accessCount": 1,
+      "lastAccessed": 1794050848589,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/seed/foods.js",
+      "accessCount": 1,
+      "lastAccessed": 1794064446827,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/scripts/db-setup.js",
+      "accessCount": 1,
+      "lastAccessed": 1794064457706,
+      "type": "file"
+    },
+    {
+      "path": "web/src/features/onboarding/pickers.jsx",
+      "accessCount": 1,
+      "lastAccessed": 1794064464142,
+      "type": "file"
+    },
+    {
+      "path": "web/src/features/onboarding/steps.jsx",
+      "accessCount": 1,
+      "lastAccessed": 1794064545433,
+      "type": "file"
+    },
+    {
+      "path": "backend/test/kammel.test.js",
+      "accessCount": 1,
+      "lastAccessed": 1794064559136,
+      "type": "file"
+    },
+    {
+      "path": "web/src/features/onboarding/results.jsx",
+      "accessCount": 1,
+      "lastAccessed": 1794064599206,
+      "type": "file"
+    },
+    {
+      "path": "web/src/features/onboarding/Onboarding.jsx",
+      "accessCount": 1,
+      "lastAccessed": 1794064649977,
+      "type": "file"
+    },
+    {
+      "path": "web/src/features/onboarding/routes.jsx",
+      "accessCount": 1,
+      "lastAccessed": 1794064691149,
+      "type": "file"
+    },
+    {
+      "path": "web/src/features/onboarding/onboarding.css",
+      "accessCount": 1,
+      "lastAccessed": 1794064693847,
+      "type": "file"
+    },
+    {
+      "path": "web/src/lib/auth.jsx",
+      "accessCount": 1,
+      "lastAccessed": 1794064700401,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/routes/catalog.js",
+      "accessCount": 1,
+      "lastAccessed": 1794064793317,
+      "type": "file"
+    },
+    {
+      "path": "backend/src",
+      "accessCount": 1,
+      "lastAccessed": 1794064936212,
+      "type": "directory"
+    },
+    {
+      "path": "backend/API.md",
+      "accessCount": 1,
+      "lastAccessed": 1794065153872,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

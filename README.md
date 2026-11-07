@@ -1,230 +1,131 @@
-# FitCoach AI
+# Kammel (كمّل)
 
-Application de coaching sportif qui s'adapte aux machines disponibles dans la salle.
+**Machine occupée ? Kammel.** Application web (PWA, installable sur le téléphone) pour les salles de sport en Tunisie :
+le sportif suit son programme, et quand une machine est occupée, absente ou en panne, l'app propose tout de suite
+3 exercices pour les mêmes muscles. L'équipe de la salle gère membres, entrées, paiements, machines et contenu.
 
 | Partie | Dossier | Technologies |
 | --- | --- | --- |
-| API (serveur) | `backend/` | Node.js, Express, Sequelize, MySQL |
-| Site web (sportif, gérant, administrateur) | `web/` | React (Vite) |
-| Application mobile (sportif) | `mobile/` | React Native (Expo) |
+| API | `backend/` | Node.js 20+, Express, Sequelize, MySQL / MariaDB / TiDB |
+| Application web (membres, équipe de la salle, administrateur) | `web/` | React 18, Vite 6, PWA |
+| Ancienne application mobile (gelée, plus maintenue) | `mobile/` | Expo |
 
-Les trois parties sont en français et en arabe.
+Langues : français, arabe (RTL, tunisien) et anglais. Thème sombre par défaut, clair au choix.
 
----
-
-## 1. Ce qu'il faut installer (une seule fois)
-
-1. **Node.js 20 ou plus récent** : https://nodejs.org (version « LTS »).
-   Vérifier dans un terminal : `node -v`
-2. **MySQL Server 8 et MySQL Workbench** : https://dev.mysql.com/downloads/installer/
-   Pendant l'installation, notez le mot de passe de l'utilisateur `root`.
-3. **Expo Go** sur votre téléphone (Play Store ou App Store), pour l'application mobile.
-4. Un éditeur de code, par exemple **VS Code**.
+| Rôle | Connexion | Espace |
+| --- | --- | --- |
+| Membre (sportif) | numéro de téléphone | `/app` : accueil, entraînement, séance, repas + eau, coach IA, compte |
+| Gérant · Accueil · Technicien · Coach | e-mail | `/salle` : chaque rôle ne voit que ses menus |
+| Administrateur Kammel | e-mail | `/admin` : salles, catalogue d'exercices, utilisateurs |
 
 ---
 
-## 2. Base de données et API
+## 1. Lancer l'application sur votre PC
 
-### 2.1 Configurer la connexion MySQL
+### À installer une fois
+- **Node.js 20 ou plus récent** (LTS) : https://nodejs.org
+- **MySQL 8** (MySQL Workbench) **ou XAMPP** (MariaDB) : le serveur doit être démarré.
 
-Dans le dossier `backend`, copiez le fichier `.env.example` et renommez la copie en `.env`.
-Ouvrez `.env` et mettez le mot de passe MySQL de `root` (le même que dans Workbench) :
-
+### API (premier terminal)
 ```
-DB_USER=root
-DB_PASSWORD=votre_mot_de_passe
-DB_NAME=fitcoach
-```
-
-Changez aussi `JWT_SECRET` par une phrase secrète de votre choix.
-
-### 2.2 Installer et créer la base
-
-Ouvrez un terminal dans le dossier `backend` :
-
-```
+cd backend
+copy .env.example .env      (Mac/Linux : cp .env.example .env)
 npm install
 npm run db:setup
-```
-
-`db:setup` crée la base `fitcoach`, toutes les tables (avec Sequelize) et les données de démonstration :
-2 salles, 57 exercices en français et en arabe, des abonnés, 3 semaines de séances.
-
-> Attention : `db:setup` efface et recrée les tables. Ne le relancez que pour repartir de zéro.
-
-### 2.3 Lancer l'API
-
-```
 npm run dev
 ```
+- Dans `.env` : mettez le mot de passe MySQL (`DB_PASSWORD`) et un `JWT_SECRET` aléatoire :
+  `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`
+- `db:setup` **efface et recrée** la base `kammel` avec les données de démonstration (salle Kammel Gym Lac 2, équipe, membres, paiements, entrées…).
+- L'API répond sur http://localhost:4000/api (vérification : http://localhost:4000/api/health).
 
-Le terminal affiche `API FitCoach AI : http://localhost:4000/api`. Laissez ce terminal ouvert.
-
-### 2.4 Voir la base dans MySQL Workbench
-
-1. Ouvrez la connexion « Local instance » dans Workbench.
-2. Dans le panneau **Schemas**, cliquez sur l'icône d'actualisation : la base `fitcoach` apparaît avec ses 13 tables.
-3. Pour le rapport : menu **Database > Reverse Engineer…**, choisissez `fitcoach`, et Workbench dessine le diagramme des tables avec leurs relations.
-
----
-
-## 3. Site web
-
-Ouvrez un **deuxième** terminal dans le dossier `web` :
-
+### Site web (deuxième terminal)
 ```
+cd web
 npm install
 npm run dev
 ```
+Ouvrez http://localhost:5173. Sur le téléphone (même Wi-Fi) : `http://IP-du-PC:5173`.
 
-Ouvrez http://localhost:5173 dans le navigateur.
+### Comptes de démonstration (mot de passe `Kammel2026!`)
+| Rôle | Identifiant |
+| --- | --- |
+| Membre (profil de référence) | `22 345 678` |
+| Membre en arabe · membre expiré | `55 120 447` · `23 908 115` |
+| Gérant Kammel Gym Lac 2 | `sami@kammelgym.tn` |
+| Accueil · Technicien · Coach | `leila@kammelgym.tn` · `walid@kammelgym.tn` · `hichem@kammelgym.tn` |
+| Administrateur | `admin@kammel.tn` |
+| Nouveau membre (première connexion) | `24 117 590` + le mot de passe provisoire affiché par `db:setup` |
 
-### Comptes de démonstration
+### Tests
+```
+cd backend
+npm test                                                   # algorithmes et règles (sans base)
+DB_NAME=kammel_test KAMMEL_API_TEST=1 npm run test:api     # API complète : sécurité, rôles, salles séparées
+```
+(`test:api` refuse de tourner sur une base dont le nom ne finit pas par `_test`. Créez-la d'abord avec `DB_NAME=kammel_test npm run db:setup`.)
 
-| Rôle | E-mail | Mot de passe |
-| --- | --- | --- |
-| Sportif | sportif@fitcoach.tn | Sportif123! |
-| Gérant de salle | gerant@fitcoach.tn | Gerant123! |
-| Administrateur | admin@fitcoach.tn | Admin123! |
+### Coach IA et scan des repas (gratuit, facultatif)
+Clé gratuite sur https://aistudio.google.com/apikey → `GEMINI_API_KEY=` dans `backend/.env`, puis relancez l'API.
+Sans clé : programme créé par nos règles, coach en mode simple (français, arabe, derja), pas de scan photo.
 
 ---
 
-## 4. Application mobile
+## 2. Mettre l'application en ligne gratuitement
 
-L'API doit être lancée (étape 2.3). Le téléphone et l'ordinateur doivent être **sur le même Wi-Fi**.
-
-Ouvrez un **troisième** terminal dans le dossier `mobile` :
-
-```
-npm install
-npx expo install --fix
-npx expo start
-```
-
-- `npx expo install --fix` aligne automatiquement les versions des paquets sur le SDK Expo installé.
-- Scannez le QR code avec **Expo Go** (Android) ou avec l'appareil photo (iPhone).
-- L'application trouve toute seule l'adresse de votre ordinateur. L'adresse utilisée s'affiche en bas de l'écran de connexion.
-
-Si Expo Go affiche « Project is incompatible with this version of Expo Go » :
-
-```
-npm install expo@latest
-npx expo install --fix
-```
-
-Si `npm install` affiche une erreur `ERESOLVE`, utilisez `npm install --legacy-peer-deps`.
+Voir **[DEPLOY.md](DEPLOY.md)** : Cloudflare Pages (site) + Render (API) + TiDB Cloud (base), 0 €, sans carte bancaire.
 
 ---
 
-## 5. Activer le coach IA (gratuit, facultatif)
+## 3. Sécurité (résumé)
 
-Sans clé, l'application fonctionne en **mode simple** : le programme est créé par nos règles et le coach répond aux questions fréquentes (français, arabe, derja).
-
-Pour activer Gemini :
-
-1. Créez une clé gratuite sur https://aistudio.google.com/apikey (compte Google de plus de 18 ans).
-2. Collez-la dans `backend/.env` : `GEMINI_API_KEY=votre_cle`
-3. Relancez l'API (`Ctrl + C` puis `npm run dev`).
-
-Si Gemini ne répond pas (quota atteint, pas d'Internet), l'application repasse automatiquement en mode simple.
+- Session dans un cookie `HttpOnly`, `SameSite=Strict` (`Secure` en ligne), jeton signé HS256 de 7 jours ; coupée immédiatement si le compte est désactivé ou le mot de passe changé. « Rester connecté » décoché = session de 12 h (PC partagé de l'accueil).
+- Les membres n'ont jamais de mot de passe commun : l'accueil reçoit un **mot de passe provisoire aléatoire** (affiché une seule fois) que le membre change à sa première connexion.
+- Blocage du compte 15 min après 5 erreurs, limitation du débit par adresse IP et par identifiant, réponses identiques que le compte existe ou non.
+- Protection CSRF (en-tête obligatoire + origine vérifiée), en-têtes de sécurité (CSP stricte, HSTS, anti-iframe), aucune pile d'erreur renvoyée.
+- Chaque rôle n'accède qu'à ses fonctions, vérifié **côté serveur** ; un membre de l'équipe ne voit que sa salle ; l'accueil ne voit jamais les données de santé ; chaque action sur un membre, un paiement ou les réglages est enregistrée (journal).
+- Photos vérifiées sur leurs octets (JPEG/PNG/WebP), servies uniquement aux personnes autorisées ; carte d'accès = QR signé qui change toutes les 30 s.
+- Dépendances : `npm audit` → 0 vulnérabilité (web et API) ; aucune bibliothèque inutile.
 
 ---
 
-## 6. Où se trouve quoi (pour la soutenance)
+## 4. Où se trouve quoi (pour la soutenance)
 
 ```
 backend/src/
-  models/index.js              13 tables Sequelize et leurs relations
-  services/substitution.js     ALGORITHME DE REMPLACEMENT (fonction principale)
-  services/programGenerator.js génération du programme par règles
-  services/coach.js            coach IA (Gemini) et validation de ses réponses
-  services/coachFallback.js    réponses du coach en mode simple
-  routes/                      les routes de l'API (une par espace)
-  seed/                        données de démonstration (exercices FR/AR)
-backend/test/logic.test.js     tests des algorithmes (npm test)
+  models/index.js               toutes les tables et leurs relations
+  middleware/                   session (auth.js), sécurité HTTP (security.js), erreurs
+  services/permissions.js       matrice des rôles de l'équipe
+  services/substitution.js      ALGORITHME DE REMPLACEMENT (fonction principale)
+  services/targets.js           calories, macros, eau, IMC (Mifflin-St Jeor)
+  services/occupancy.js         affluence en direct et habituelle
+  services/accessPass.js        carte d'accès (QR qui change toutes les 30 s)
+  routes/                       API membre ; routes/staff/ espace salle ; routes/admin.js
+  seed/                         données de démonstration
+backend/API.md                  toutes les routes de l'API
+backend/test/                   tests (npm test, npm run test:api)
 
 web/src/
-  pages/athlete/Session.jsx    écran de séance + boutons Occupée / Absente / En panne
-  pages/manager/               tableau de bord du gérant
-  pages/admin/                 espace administrateur
-  locales.js                   textes en français et en arabe
-
-mobile/
-  App.js                       navigation (onglets + écrans)
-  src/screens/SessionScreen.js séance et remplacement sur le téléphone
+  styles/                       design system (couleurs, typographie, composants)
+  components/                   kit de composants (boutons, anneaux, feuilles…)
+  features/                     un dossier par écran (session/, meals/, staff/ops/…)
+  layouts/                      barre d'onglets du membre, menu de l'espace salle
 ```
 
-### L'algorithme de remplacement en 4 étapes
-
-Quand une machine est occupée, absente ou en panne (`services/substitution.js`) :
-
+### L'algorithme de remplacement en 4 étapes (`services/substitution.js`)
 1. On garde les exercices qui travaillent **le même muscle principal**.
-2. On enlève ceux qui demandent un matériel absent de la salle, ou la machine indisponible.
-3. On enlève ceux qui sollicitent une **zone blessée** du sportif, ou trop difficiles pour son niveau.
-4. On donne un score : même mouvement **+3**, chaque muscle secondaire commun **+1**, difficulté adaptée au niveau **+2**, exercice déjà pratiqué **+1**. On propose les **3 meilleurs**.
-
-Exemple : presse à cuisses occupée → squat à la barre, goblet squat, fente bulgare.
-
-### Règles de gestion appliquées dans le code
-
-| Règle | Où |
-| --- | --- |
-| RG1 profil et salle obligatoires avant le programme | `routes/programs.js` |
-| RG2 seulement des exercices faisables dans la salle | `services/substitution.js`, `services/coach.js` |
-| RG3 le remplacement travaille le même muscle | `services/substitution.js` |
-| RG4 3 remplacements au maximum | `services/substitution.js` |
-| RG5 aucun exercice sur une zone blessée | `services/substitution.js` |
-| RG6 machine en panne confirmée = plus proposée | `routes/manager.js` |
-| RG7 un gérant ne gère que sa salle | `routes/manager.js` |
-| RG8 montants en dinars tunisiens | `models/index.js`, `web/src/i18n.jsx` |
+2. On enlève ceux qui demandent un matériel absent ou hors service, ou la machine indisponible.
+3. On enlève ceux qui sollicitent une **zone douloureuse** du sportif, ou trop difficiles pour son niveau.
+4. Score : même mouvement **+3**, muscle secondaire commun **+1**, difficulté adaptée **+2**, déjà pratiqué **+1** ; les alternatives choisies par le coach passent en premier. On propose les **3 meilleures**.
 
 ---
 
-## 7. Liste des routes de l'API
-
-| Méthode | Route | Rôle | Description |
-| --- | --- | --- | --- |
-| POST | `/api/auth/register` | public | inscription d'un sportif |
-| POST | `/api/auth/login` | public | connexion (renvoie un jeton JWT) |
-| GET | `/api/auth/me` | connecté | utilisateur connecté |
-| PUT | `/api/me/profile` | connecté | modifier son profil |
-| GET | `/api/me/subscription` | sportif | mon abonnement |
-| POST | `/api/me/checkin` · `/api/me/checkout` | sportif | arrivée / départ de la salle |
-| POST | `/api/me/reports` | sportif | signaler une panne |
-| GET | `/api/gyms` · `/api/gyms/:id` | public / connecté | salles et machines |
-| GET | `/api/gyms/:id/occupancy` | connecté | affluence en direct |
-| GET | `/api/exercises` · `/api/exercises/:id` | public | bibliothèque d'exercices |
-| GET | `/api/exercises/:id/alternatives` | sportif | remplacements possibles |
-| POST | `/api/programs/generate` | sportif | générer un programme (IA ou règles) |
-| GET | `/api/programs/current` · `/api/programs/today` | sportif | programme et séance du jour |
-| POST | `/api/sessions` | sportif | démarrer une séance (`quick30` : version 30 min) |
-| PUT | `/api/sessions/:id/entries/:entryId` | sportif | enregistrer les séries |
-| GET | `/api/sessions/:id/entries/:entryId/alternatives` | sportif | remplacements pendant la séance |
-| POST | `/api/sessions/:id/entries/:entryId/substitute` | sportif | remplacer l'exercice |
-| POST | `/api/sessions/:id/entries/:entryId/postpone` | sportif | « J'attends » |
-| POST | `/api/sessions/:id/finish` | sportif | terminer la séance |
-| GET | `/api/progress` | sportif | statistiques de progression |
-| GET · POST | `/api/coach/messages` | sportif | discussion avec le coach |
-| GET · PUT | `/api/manager/gym` | gérant | infos de la salle |
-| GET · POST · PUT · DELETE | `/api/manager/machines` | gérant | équipements |
-| GET · PUT | `/api/manager/reports` | gérant | pannes (confirmer, réparée, rejeter) |
-| GET · POST | `/api/manager/members` | gérant | abonnés |
-| GET · POST · PUT · DELETE | `/api/manager/subscriptions` | gérant | abonnements |
-| GET | `/api/manager/stats` | gérant | statistiques de la salle |
-| GET · POST · PUT · DELETE | `/api/admin/gyms` | admin | salles et comptes gérants |
-| GET · PATCH | `/api/admin/users` | admin | utilisateurs (activer / désactiver) |
-| POST · PUT · DELETE | `/api/admin/exercises` | admin | bibliothèque d'exercices |
-
-Vous pouvez tester ces routes avec **Postman** : après `/api/auth/login`, ajoutez l'en-tête `Authorization: Bearer <jeton>`.
-
----
-
-## 8. Problèmes fréquents
+## 5. Problèmes fréquents
 
 | Problème | Solution |
 | --- | --- |
-| `ER_ACCESS_DENIED_ERROR` | Mauvais mot de passe MySQL dans `backend/.env`. |
-| `ECONNREFUSED 3306` | MySQL n'est pas démarré : Windows > Services > **MySQL80** > Démarrer. |
-| Le site affiche « Serveur injoignable » | L'API n'est pas lancée : `npm run dev` dans `backend`. |
-| Le téléphone n'arrive pas à se connecter | Même Wi-Fi ; autorisez **Node.js** dans le pare-feu Windows (réseaux privés). Sinon, écrivez l'adresse IP de votre PC dans `mobile/src/api.js` (`MANUAL_API_URL`). |
-| Port 4000 déjà utilisé | Changez `PORT` dans `backend/.env`, la ligne `proxy` de `web/vite.config.js` et le port dans `mobile/src/api.js`. |
+| `ER_ACCESS_DENIED_ERROR` | Mauvais `DB_USER` / `DB_PASSWORD` dans `backend/.env`. |
+| `ECONNREFUSED 3306` | MySQL n'est pas démarré (Services Windows > MySQL80, ou XAMPP > MySQL > Start). |
+| « La base date de l'ancienne version » | Ancienne base FitCoach : lancez `npm run db:setup`. |
+| Le site affiche « Serveur injoignable » | L'API n'est pas lancée (`npm run dev` dans `backend`). |
+| Port 4000 occupé | Changez `PORT` dans `backend/.env` et lancez le site avec `API_PORT=<port> npm run dev`. |

@@ -1,0 +1,25 @@
+{
+  "name": "Kammel",
+  "short_name": "Kammel",
+  "description": "Machine occupée ? Kammel. Ton programme, tes alternatives, tes repas et ton eau.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0D10",
+  "theme_color": "#0B0D10",
+  "lang": "fr",
+  "dir": "auto",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    { "src": "/icons/kammel-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/kammel-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/kammel-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Ma séance", "url": "/app", "icons": [{ "src": "/icons/kammel-192.png", "sizes": "192x192" }] },
+    { "name": "Repas et eau", "url": "/app/repas", "icons": [{ "src": "/icons/kammel-192.png", "sizes": "192x192" }] },
+    { "name": "Scanner une entrée", "url": "/salle/scanner", "icons": [{ "src": "/icons/kammel-192.png", "sizes": "192x192" }] }
+  ]
+}

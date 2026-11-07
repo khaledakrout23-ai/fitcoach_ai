@@ -1,0 +1,489 @@
+/* ==========================================================================
+   Onboarding (B1a) : une question par écran, résultats, courbe, récapitulatif
+   ========================================================================== */
+
+.onb {
+  gap: var(--s5);
+  padding-bottom: 0;
+}
+.onb-top {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  min-height: 56px;
+}
+.onb-top .icon-btn {
+  background: var(--surface);
+}
+.onb .segments span {
+  height: 6px;
+  border-radius: 3px;
+}
+.onb-eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ember-text);
+  letter-spacing: 0.06em;
+}
+:lang(fr) .onb-eyebrow,
+:lang(en) .onb-eyebrow {
+  text-transform: uppercase;
+}
+.onb-title {
+  font-size: 28px;
+  line-height: 1.3;
+}
+.onb-title:focus,
+.onb-title:focus-visible {
+  outline: none;
+}
+.onb-why {
+  font-size: 16px;
+}
+.onb-body {
+  flex: 1;
+}
+.onb-bar {
+  margin-top: var(--s4);
+}
+.onb-bar .mascot {
+  align-items: flex-end;
+}
+.onb-bar .mascot .bubble {
+  border-end-start-radius: 4px;
+}
+/* les toasts passent au-dessus du bouton « Continuer » */
+body:has(.onb) .toasts {
+  bottom: calc(110px + var(--safe-bottom));
+}
+
+.onb-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--danger);
+}
+.onb-center {
+  align-items: center;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- Sexe : deux grandes cartes */
+.sex-tile {
+  position: relative;
+  min-height: 200px;
+  border: 1.5px solid transparent;
+  border-radius: var(--r-card);
+  background: var(--surface);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: var(--s2);
+  padding: var(--s5);
+  text-align: start;
+  transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
+}
+[data-theme='light'] .sex-tile {
+  border-color: var(--line);
+}
+.sex-tile:active {
+  transform: scale(0.98);
+}
+.sex-tile[aria-checked='true'] {
+  border-color: var(--ember);
+  background: var(--ember-soft);
+}
+.sex-tile .radio {
+  position: absolute;
+  top: var(--s4);
+  inset-inline-end: var(--s4);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  display: grid;
+  place-items: center;
+  color: var(--on-ember);
+}
+.sex-tile[aria-checked='true'] .radio {
+  background: var(--ember);
+  border-color: var(--ember);
+}
+.sex-icon {
+  color: var(--text-muted);
+}
+.sex-tile[aria-checked='true'] .sex-icon {
+  color: var(--ember-text);
+}
+.sex-label {
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.onb-na {
+  font-size: 16px;
+}
+
+/* ---------------------------------------------------------------- Grand nombre modifiable */
+.big-input {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  direction: ltr;
+}
+.big-input input {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--text);
+  text-align: center;
+  padding: 0;
+  font-size: 64px;
+  min-width: 2ch;
+  outline: none;
+  transition: border-color var(--t-fast);
+}
+.big-input input:focus {
+  border-bottom-color: var(--ember);
+}
+.big-input input[aria-invalid='true'] {
+  color: var(--danger);
+}
+.big-unit {
+  font-size: 20px;
+  color: var(--text-muted);
+}
+
+/* ---------------------------------------------------------------- Règle horizontale */
+.ruler {
+  position: relative;
+  width: 100%;
+  height: 84px;
+  border-radius: 12px;
+  touch-action: pan-x;
+}
+.ruler-scroll {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  cursor: grab;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 18%, black 82%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 18%, black 82%, transparent);
+}
+.ruler-scroll::-webkit-scrollbar {
+  display: none;
+}
+.ruler-pad {
+  flex: 0 0 50%;
+}
+.ruler-scale {
+  position: relative;
+  flex: none;
+  height: 100%;
+}
+.ruler-ticks {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 48px;
+  background:
+    linear-gradient(90deg, var(--text-muted) 0 2px, transparent 2px) 0 0 / var(--major) 48px repeat-x,
+    linear-gradient(90deg, var(--line) 0 1px, transparent 1px) 0.5px 18px / var(--px) 30px repeat-x;
+}
+[dir='rtl'] .ruler-ticks {
+  transform: scaleX(-1);
+}
+.ruler-label {
+  position: absolute;
+  top: 56px;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+[dir='rtl'] .ruler-label {
+  transform: translateX(50%);
+}
+.ruler-needle {
+  position: absolute;
+  top: -6px;
+  left: calc(50% - 1.5px);
+  width: 3px;
+  height: 60px;
+  border-radius: 2px;
+  background: var(--ember);
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- Roue des années */
+.onb-age {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ember-text);
+}
+.wheel {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  height: 260px;
+}
+.wheel-band {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(50% - 26px);
+  height: 52px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  pointer-events: none;
+}
+.wheel-scroll {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  padding-block: 104px;
+  overscroll-behavior: contain;
+  border-radius: 14px;
+  -webkit-mask-image: linear-gradient(transparent, black 30%, black 70%, transparent);
+  mask-image: linear-gradient(transparent, black 30%, black 70%, transparent);
+}
+.wheel-scroll::-webkit-scrollbar {
+  display: none;
+}
+.wheel-item {
+  height: 52px;
+  display: grid;
+  place-items: center;
+  scroll-snap-align: center;
+  font-size: 22px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.wheel-item.on {
+  color: var(--text);
+  font-size: 30px;
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------------- Poids sain */
+.healthy-bar {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  margin-block: var(--s2);
+}
+.healthy-bar .band {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--ok) 60%, transparent);
+}
+.healthy-bar .marker {
+  position: absolute;
+  top: -5px;
+  width: 4px;
+  height: 16px;
+  margin-inline-start: -2px;
+  border-radius: 2px;
+  background: var(--text);
+}
+.use-chip {
+  align-self: flex-start;
+}
+
+/* ---------------------------------------------------------------- Douleurs */
+.onb-zones .chip {
+  justify-content: center;
+  min-height: 48px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+}
+.removed-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ---------------------------------------------------------------- Jours */
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+.day {
+  height: 56px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 16px;
+  font-weight: 500;
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+[data-theme='light'] .day {
+  background: var(--surface-2);
+}
+.day:active {
+  transform: scale(0.95);
+}
+.day[aria-pressed='true'] {
+  background: var(--ember);
+  color: var(--on-ember);
+}
+
+/* ---------------------------------------------------------------- Accord */
+.card.consent {
+  padding: var(--s5);
+}
+.card.consent .checkbox {
+  font-size: 16px;
+}
+
+/* ---------------------------------------------------------------- Résultats */
+.results-donut {
+  display: flex;
+  align-items: center;
+  gap: var(--s5);
+  padding: var(--s5);
+}
+.donut-kcal {
+  display: block;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+.macro-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  font-size: 15px;
+}
+.macro-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+.compare {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.compare-num {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.compare-num small,
+.summary-kcal small {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.bmi-scale {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  height: 8px;
+  margin-block: var(--s2);
+}
+.bmi-scale i {
+  border-radius: 4px;
+}
+.bmi-scale i.hydro {
+  background: var(--hydro);
+}
+.bmi-scale i.ok {
+  background: var(--ok);
+}
+.bmi-scale i.warn {
+  background: var(--warn);
+}
+.bmi-scale i.danger {
+  background: var(--danger);
+}
+.bmi-scale b {
+  position: absolute;
+  top: -6px;
+  width: 4px;
+  height: 20px;
+  margin-inline-start: -2px;
+  border-radius: 2px;
+  background: var(--text);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+.bmi-labels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.bmi-labels span:nth-child(2),
+.bmi-labels span:nth-child(3) {
+  text-align: center;
+}
+.bmi-labels span:last-child {
+  text-align: end;
+}
+.water-card {
+  gap: var(--s4);
+}
+.stack-2.tight {
+  gap: 0;
+}
+.water-card .link-btn {
+  text-align: end;
+  max-width: 45%;
+}
+
+/* ---------------------------------------------------------------- Courbe */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+.tl-svg {
+  display: block;
+  overflow: visible;
+}
+[dir='rtl'] .tl-svg {
+  transform: scaleX(-1);
+}
+
+/* ---------------------------------------------------------------- Récapitulatif */
+.summary-kcal {
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+.summary-macros {
+  gap: var(--s4);
+}
+.summary-review {
+  align-self: center;
+}
+.onb .chips .chip {
+  cursor: default;
+}
